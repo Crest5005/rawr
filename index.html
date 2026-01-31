@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Private Portal</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: sans-serif; }
+        #container { width: 100vw; height: 100vh; }
+        #status { position: absolute; top: 10px; left: 10px; color: lime; z-index: 10; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div id="status">Connecting to Cloud...</div>
+    <div id="container"></div>
+
+    <script type="module">
+        import Hyperbeam from "https://unpkg.com/@hyperbeam/web@latest/dist/index.js";
+
+        // 1. YOUR KEY HERE
+        const HB_API_KEY = "https://0ou8zf1ijdm8750od0cwn92b2.hyperbeam.com/mFE2ibfSQFGB7_QcDNVhaw?token=PTUfIXExdvb3lEiLUR3t_D0piQZwTDMdYkfQp0f3YCA","admin_token":"52kgxQ0e9fv2ga5xUu2gdLfVTKy_SHsaZZ-99GDF7iY"; 
+
+        async function init() {
+            try {
+                // 2. We ask Hyperbeam for a session directly from the browser
+                const response = await fetch("https://engine.hyperbeam.com/v0/vm", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${HB_API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ start_url: "https://www.twitch.tv" })
+                });
+
+                const data = await response.json();
+                
+                // 3. Launch the virtual browser
+                await Hyperbeam(document.getElementById("container"), data.embed_url);
+                document.getElementById("status").innerText = "Cloud Online";
+            } catch (err) {
+                document.getElementById("status").style.color = "red";
+                document.getElementById("status").innerText = "Connection Blocked by Firewall";
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
